@@ -1,0 +1,26 @@
+export { default as ArrowUpIcon } from "./arrow-upp.icon";
+export { default as ArrowDownIcon } from "./arrow-down.icon";
+export { default as EmptyIcon } from "./empty.icon";
+export { default as InboxOutlined } from "./inbox-outlined.icon";
+export { default as ArrowsLeftRigth } from "./arrows-left-rigth.icon";
+export { default as DownloagIcon } from "./download.icon";
+export { default as MonitorIcon } from "./monitor.icon";
+export { default as YoutubeIcon } from "./youtube.icon";
+export { default as ArrowLeftIcon } from "./arrow-left.icon";
+export { default as PlayIcon } from "./play.icon";
+export { default as RedCrossIcon } from "./red-cross.icon";
+export { default as WhitePlusIcon } from "./white-plus.icon";
+export { default as UpIcon } from "./up.icon";
+export { default as DownIcon } from "./down.icon";
+export { default as DownGrayIcon } from "./down-gray.icon";
+export { default as UploadIcon } from "./upload.icon";
+export { default as DownWhiteIcon } from "./down-white.icon";
+export { default as UploadWhiteIcon } from "./upload-white.icon";
+export { default as RenderVideoIcon } from "./render-video-white.icon";
+export { default as ListIcon } from "./list.icon";
+export { default as HelpIcon } from "./help.icon";
+export { default as LogOutIcon } from "./log-out.icon";
+export { default as SettingIcon } from "./settings.icon";
+export { default as CoinsIcon } from "./coins.icon";
+export { default as StripeIcon } from "./stripe.icon";
+
