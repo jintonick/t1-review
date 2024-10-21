@@ -7,6 +7,7 @@ import ProjectsPage from "@app/pages/projects-page/projects.page";
 import RequiredAuth from "@app/routes/required-auth.route";
 import ForgotEmailPage from "@app/pages/authtorization/forgot-email.page";
 import ForgotPasswordPage from "@app/pages/authtorization/forgot-password.page";
+import MyMeet from "@app/pages/my-meetings/my-meet";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +26,7 @@ export const router = createBrowserRouter(
         }
       >
         <Route index element={<ProjectsPage />} />
+        <Route path="/my-meet" element={<MyMeet />} />
       </Route>
     </>
   )

@@ -1,5 +1,16 @@
 import { ReactNode } from "react";
-import { ChartsLayoutType } from "../../../../../ukt/user-interface-front/analytics/app-src/client/src/interfaces/dashboards.type";
+
+export type ChartsLayoutType = {
+  h: number;
+  max_h?: number;
+  max_w?: number;
+  min_h?: number;
+  min_w?: number;
+  w: number;
+  x: number;
+  y: number;
+  i: string;
+};
 
 export type TableTitle = {
   title: string | ReactNode;

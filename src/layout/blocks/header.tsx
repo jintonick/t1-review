@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Progress } from "antd";
 import logo from "@app/imgs/logo.svg";
 import { useAuthContext } from "@app/utils/auth-provider";
 import { useNavigate } from "react-router-dom";
@@ -14,10 +13,6 @@ export const Header = () => {
   const avatarRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -30,6 +25,10 @@ export const Header = () => {
   const handleClick = () => {
     navigate("/");
   };
+  const handleMeetClick = () => {
+    navigate("/my-meet");
+  };
+
 
   const handleMenuToggle = () => {
     setIsMenuOpen((prev) => !prev);
@@ -54,17 +53,11 @@ export const Header = () => {
 
   return (
     <div className="w-full h-[67px] bg-white flex items-center justify-between relative">
-      <div className="ml-[50px]">
+      <div className="ml-[50px] flex justify-center gap-[125px]">
         <button onClick={handleClick}><img src={logo} alt="logo" /></button>
+        <button onClick={handleMeetClick} className="font-bold text-[18px]">Мои встречи</button>
       </div>
       <div className="flex mr-[34px] items-center gap-[66px]">
-        <div className='w-[260px]' onClick={handleOpenModal}>
-          <div className="flex justify-between items-center">
-            <h1 className="text-[14px] text-[#598BF2]">1450 credits used</h1>
-            <h1 className="text-[14px]">3550 credits left</h1>
-          </div>
-          <Progress percent={30} showInfo={false} />
-        </div>
         <div className="relative">
           <div
             className="w-[36px] h-[36px] rounded-full bg-[#C55F5F] flex items-center justify-center text-white cursor-pointer"
