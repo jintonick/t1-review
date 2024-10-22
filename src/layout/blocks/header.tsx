@@ -29,6 +29,9 @@ export const Header = () => {
     navigate("/my-meet");
   };
 
+  const handleArtifactsClick = () => {
+    navigate("/artifacts");
+  };
 
   const handleMenuToggle = () => {
     setIsMenuOpen((prev) => !prev);
@@ -55,7 +58,10 @@ export const Header = () => {
     <div className="w-full h-[67px] bg-white flex items-center justify-between relative">
       <div className="ml-[50px] flex justify-center gap-[125px]">
         <button onClick={handleClick}><img src={logo} alt="logo" /></button>
-        <button onClick={handleMeetClick} className="font-bold text-[18px]">Мои встречи</button>
+        <div className="flex justify-center gap-[50px]">
+          <button onClick={handleMeetClick} className="font-bold text-[18px]">Мои встречи</button>
+          <button onClick={handleArtifactsClick} className="font-bold text-[18px]">Артефакты</button>
+        </div>
       </div>
       <div className="flex mr-[34px] items-center gap-[66px]">
         <div className="relative">
