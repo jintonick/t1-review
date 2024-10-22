@@ -9,7 +9,12 @@ import { saveTokens, removeTokens, getTokens } from "@app/utils/auth-token-utils
 
 interface AuthContextType {
   isAuth: boolean | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  userType: "expert" | "client" | "user" | null;
+  login: (
+      email: string,
+      password: string,
+      userType: "expert" | "client" | "user" | null
+  ) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -25,43 +30,35 @@ export const useAuthContext = () => {
 
 const useProvideAuth = (): AuthContextType => {
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
+  const [userType, setUserType] = useState<"expert" | "client" | "user" | null>(null);
 
-  const login = async () => {
+  const login = async (
+    email: string,
+    password: string,
+    userType: "expert" | "client" | "user" | null
+  ) => {
+    if (!userType) {
+      console.error("User type not selected");
+      return false;
+    }
     try {
       const dummyToken = "dummy-jwt-token";
       saveTokens({ access_token: dummyToken });
       setIsAuth(true);
+      setUserType(userType);
+      localStorage.setItem("userType", userType);
       return true;
-
-      // Оставляем код для будущего использования
-      /*
-      const data = new URLSearchParams();
-      data.append("username", email);
-      data.append("password", password);
-
-      const response = await apiInstance.post("/api/auth/login", data.toString(), {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
-
-      if (response.data && response.data.access_token) {
-        const tokens = saveTokens(response.data);
-        setIsAuth(true);
-        return true;
-      } else {
-        return false;
-      }
-      */
     } catch (error) {
-      console.error("Ошибка входа:", error);
+      console.error("Login error:", error);
       return false;
     }
   };
 
   const logout = () => {
     removeTokens();
+    localStorage.removeItem("userType");
     setIsAuth(false);
+    setUserType(null);
   };
 
   useEffect(() => {
@@ -70,6 +67,12 @@ const useProvideAuth = (): AuthContextType => {
       const currentTime = Date.now();
       if (tokens.expires_at > currentTime) {
         setIsAuth(true);
+        const storedUserType = localStorage.getItem("userType") as
+            | "expert"
+            | "client"
+            | "user"
+            | null;
+        setUserType(storedUserType);
       } else {
         setIsAuth(false);
       }
@@ -80,6 +83,7 @@ const useProvideAuth = (): AuthContextType => {
 
   return {
     isAuth,
+    userType,
     login,
     logout,
   };
@@ -91,6 +95,7 @@ const AuthProvider = ({ children }: RequiredAuthProps) => {
 };
 
 export default AuthProvider;
+
 
 
 
