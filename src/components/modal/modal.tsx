@@ -5,8 +5,8 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  width?: string;   // добавлен пропс для ширины
-  height?: string;  // добавлен пропс для высоты
+  width?: string;
+  height?: string;
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, width = "100%", height = "auto" }) => {
