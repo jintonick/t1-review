@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-import { Pagination } from "antd";
+import { Button, Pagination, Modal } from "antd";
 import RubberTable from "@app/components/rubber-table";
 import data from "./data.mock.json";
+import CalendarBox from "@app/components/calendar/EventCalendar";
+
+type DataItem = {
+  id: string;
+  name: string;
+  spec: string;
+  comp: string;
+};
 
 const ProjectTabelBlock = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedItem, setSelectedItem] = useState<DataItem | null>(null);
   const itemsPerPage = 6;
 
   const columns = [
@@ -21,9 +30,13 @@ const ProjectTabelBlock = () => {
       title: "КОМПЕТЕНЦИЯ",
       index: "comp",
     },
+    {
+      title: "БРОНЬ",
+      index: "action",
+      maxWidth: 230,
+    },
   ];
 
-  // Transform data as before
   const transformedData = data.map((item) => ({
     ...item,
     name: (
@@ -31,7 +44,7 @@ const ProjectTabelBlock = () => {
         <h1 className="text-[16px]">{item.name}</h1>
       </div>
     ),
-    index: (
+    spec: (
       <div>
         <h1 className="text-[16px]">{item.spec}</h1>
       </div>
@@ -41,18 +54,29 @@ const ProjectTabelBlock = () => {
         <h1 className="text-[16px]">{item.comp}</h1>
       </div>
     ),
+    action: (
+      <div>
+        <Button type="text" onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.stopPropagation();
+          setSelectedItem(item);
+        }}>
+            Выбрать доступное время
+        </Button>
+      </div>
+    ),
   }));
 
-  // Calculate the indices for slicing the data
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  // Slice the data to display only the items for the current page
   const currentData = transformedData.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Handler for page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleModalClose = () => {
+    setSelectedItem(null);
   };
 
   return (
@@ -63,10 +87,19 @@ const ProjectTabelBlock = () => {
         total={data.length}
         pageSize={itemsPerPage}
         onChange={handlePageChange}
-
       />
+      <Modal
+        visible={!!selectedItem}
+        width={1000}
+        title="Выбор доступного времени"
+        onCancel={handleModalClose}
+        footer={null}
+      >
+        <CalendarBox />
+      </Modal>
     </div>
   );
 };
 
 export default ProjectTabelBlock;
+
