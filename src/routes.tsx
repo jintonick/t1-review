@@ -1,3 +1,5 @@
+// routes.tsx
+
 import React from "react";
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
 import DefaultPage from "@app/pages/default-page";
@@ -30,25 +32,25 @@ export const router = createBrowserRouter(
           }
         />
         <Route
-          path="/projects"
+          path="projects"
           element={
-            <ProtectedRoute allowedUserTypes={["user", "client"]}>
+            <ProtectedRoute allowedUserTypes={["client"]}>
               <ProjectsPage />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/my-meet"
+          path="my-meet"
           element={
-            <ProtectedRoute allowedUserTypes={["expert","client", "user"]}>
+            <ProtectedRoute allowedUserTypes={["expert", "client"]}>
               <MyMeet />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/artifacts"
+          path="artifacts"
           element={
-            <ProtectedRoute allowedUserTypes={["expert", "client", "user"]}>
+            <ProtectedRoute allowedUserTypes={["expert", "client"]}>
               <Artifacts />
             </ProtectedRoute>
           }
@@ -57,4 +59,6 @@ export const router = createBrowserRouter(
     </>
   )
 );
+
+
 

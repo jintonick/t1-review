@@ -1,8 +1,10 @@
+// api-instance.ts
+
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { getTokens } from "@app/utils/auth-token-utils";
 
 const apiInstance = axios.create({
-  baseURL: "https://uvio.pro",
+  baseURL: "http://localhost:8080", // Updated to your local backend
   headers: {
     Accept: "application/json",
   },

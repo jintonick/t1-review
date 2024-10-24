@@ -1,3 +1,5 @@
+// protected-route.tsx
+
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuthContext } from "@app/utils/auth-provider";
@@ -10,8 +12,9 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ allowedUserTypes, children }: ProtectedRouteProps) => {
   const auth = useAuthContext();
 
+  // Обрабатываем случай, когда isAuth равен null
   if (auth?.isAuth === null) {
-    return null;
+    return null; // Или индикатор загрузки
   }
 
   if (!auth?.isAuth || !auth.userType || !allowedUserTypes.includes(auth.userType)) {
@@ -22,3 +25,4 @@ const ProtectedRoute = ({ allowedUserTypes, children }: ProtectedRouteProps) => 
 };
 
 export default ProtectedRoute;
+

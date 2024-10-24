@@ -158,6 +158,7 @@ const CalendarBox = () => {
     setEvents(() => [...events].filter((e) => e._id !== (currentEvent as IEventInfo)._id!));
     setEventInfoModal(false);
   };
+  console.log(events);
 
   return (
     <Box

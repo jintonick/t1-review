@@ -1,22 +1,16 @@
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useState,
-  useEffect,
-} from "react";
+// auth-provider.tsx
+
+import React, { createContext, ReactNode, useContext, useState, useEffect } from "react";
+import apiInstance from "@app/utils/auth-api.instanse";
 import { saveTokens, removeTokens, getTokens } from "@app/utils/auth-token-utils";
 
 interface AuthContextType {
   isAuth: boolean | null;
-  userType: "expert" | "client" | "user" | null;
-  login: (
-      email: string,
-      password: string,
-      userType: "expert" | "client" | "user" | null
-  ) => Promise<boolean>;
+  userType: "expert" | "client" | null;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
+
 
 interface RequiredAuthProps {
   children: ReactNode;
@@ -30,24 +24,25 @@ export const useAuthContext = () => {
 
 const useProvideAuth = (): AuthContextType => {
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
-  const [userType, setUserType] = useState<"expert" | "client" | "user" | null>(null);
+  const [userType, setUserType] = useState<"expert" | "client" | null>(null);
 
-  const login = async (
-    email: string,
-    password: string,
-    userType: "expert" | "client" | "user" | null
-  ) => {
-    if (!userType) {
-      console.error("User type not selected");
-      return false;
-    }
+  const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const dummyToken = "dummy-jwt-token";
-      saveTokens({ access_token: dummyToken });
-      setIsAuth(true);
-      setUserType(userType);
-      localStorage.setItem("userType", userType);
-      return true;
+      const response = await apiInstance.post("/authenticate", {
+        username: email,
+        password: password,
+      });
+
+      if (response.data && response.data.token) {
+        // Сохранение токена
+        const tokens = saveTokens({ access_token: response.data.token });
+        setIsAuth(true);
+        setUserType(tokens.userType);
+
+        return true;
+      } else {
+        return false;
+      }
     } catch (error) {
       console.error("Login error:", error);
       return false;
@@ -56,28 +51,21 @@ const useProvideAuth = (): AuthContextType => {
 
   const logout = () => {
     removeTokens();
-    localStorage.removeItem("userType");
     setIsAuth(false);
     setUserType(null);
   };
 
+  // Добавляем useEffect для инициализации состояния аутентификации
   useEffect(() => {
     const tokens = getTokens();
+    console.log("Tokens from localStorage on init:", tokens);
     if (tokens && tokens.access_token) {
-      const currentTime = Date.now();
-      if (tokens.expires_at > currentTime) {
-        setIsAuth(true);
-        const storedUserType = localStorage.getItem("userType") as
-            | "expert"
-            | "client"
-            | "user"
-            | null;
-        setUserType(storedUserType);
-      } else {
-        setIsAuth(false);
-      }
+      setIsAuth(true);
+      setUserType(tokens.userType);
+      console.log("Auth state set to:", { isAuth: true, userType: tokens.userType });
     } else {
       setIsAuth(false);
+      setUserType(null);
     }
   }, []);
 

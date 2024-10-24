@@ -1,4 +1,4 @@
-// login.page.tsx
+// LoginPage.tsx
 
 import React, { useState } from "react";
 import { Input, Button } from "antd";
@@ -7,24 +7,19 @@ import loginLogo from "@app/imgs/logo.svg";
 import { useAuthContext } from "@app/utils/auth-provider";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-  const [userType, setUserType] = useState<"expert" | "client" | "user" | null>(null);
   const [error, setError] = useState("");
   const auth = useAuthContext();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!userType) {
-      setError("Please select a user type");
-      return;
-    }
-    const isSuccess = await auth?.login(email, password, userType);
+    const isSuccess = await auth?.login(login, password);
     if (isSuccess) {
       navigate("/");
     } else {
-      setError("Invalid email or password");
+      setError("Invalid login or password");
     }
   };
 
@@ -44,9 +39,9 @@ const LoginPage = () => {
             <Input
               className="h-[38px] rounded-[10px] mt-[2px]  border-[#DCE0E5] text-[14px] text-[#3D4858]"
               placeholder="Введите ваш логин"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
             />
           </div>
           <div className="w-full mt-[2px] mb-[10px]">
@@ -62,40 +57,10 @@ const LoginPage = () => {
           </div>
           <Button
             htmlType="submit"
-            disabled={!userType}
             className="border-none shadow-none h-[38px] w-full rounded-[10px] my-[12px] bg-[#588BF2] text-white font-bold text-[15px]"
           >
               Войти
           </Button>
-          <div className="flex justify-between w-full">
-            <button
-              type="button"
-              onClick={() => setUserType("expert")}
-              className={`px-4 py-2 ${
-                userType === "expert" ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-                Эксперт
-            </button>
-            <button
-              type="button"
-              onClick={() => setUserType("client")}
-              className={`px-4 py-2 ${
-                userType === "client" ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-                Заказчик
-            </button>
-            <button
-              type="button"
-              onClick={() => setUserType("user")}
-              className={`px-4 py-2 ${
-                userType === "user" ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-                Пользователь
-            </button>
-          </div>
         </form>
       </div>
     </div>
@@ -103,6 +68,7 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
 
 
 
