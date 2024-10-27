@@ -11,15 +11,15 @@ import {
   Autocomplete,
   Box,
 } from "@mui/material";
-import { EventFormData, ITodo } from "./EventCalendar";
+import { EventFormData, ITodo } from "./types";
 
 interface IProps {
-    open: boolean
-    handleClose: Dispatch<SetStateAction<void>>
-    eventFormData: EventFormData
-    setEventFormData: Dispatch<SetStateAction<EventFormData>>
-    onAddEvent: (e: MouseEvent<HTMLButtonElement>) => void
-    todos: ITodo[]
+  open: boolean
+  handleClose: Dispatch<SetStateAction<void>>
+  eventFormData: EventFormData
+  setEventFormData: Dispatch<SetStateAction<EventFormData>>
+  onAddEvent: (e: MouseEvent<HTMLButtonElement>) => void
+  todos: ITodo[]
 }
 
 const AddEventModal = ({ open, handleClose, eventFormData, setEventFormData, onAddEvent, todos }: IProps) => {
@@ -72,10 +72,10 @@ const AddEventModal = ({ open, handleClose, eventFormData, setEventFormData, onA
         </DialogContent>
         <DialogActions>
           <Button color="error" onClick={onClose}>
-                      Cancel
+            Cancel
           </Button>
           <Button disabled={description === ""} color="success" onClick={onAddEvent}>
-                      Add
+            Add
           </Button>
         </DialogActions>
       </Dialog>

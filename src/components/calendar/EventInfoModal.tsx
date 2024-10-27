@@ -1,13 +1,13 @@
 import { SetStateAction, MouseEvent, Dispatch } from "react";
 import React from "react";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Box, Typography } from "@mui/material";
-import { IEventInfo } from "./EventCalendar";
+import { IEventInfo } from "./types";
 
 interface IProps {
-    open: boolean
-    handleClose: Dispatch<SetStateAction<void>>
-    onDeleteEvent: (e: MouseEvent<HTMLButtonElement>) => void
-    currentEvent: IEventInfo | null
+  open: boolean
+  handleClose: Dispatch<SetStateAction<void>>
+  onDeleteEvent: (e: MouseEvent<HTMLButtonElement>) => void
+  currentEvent: IEventInfo | null
 }
 
 const EventInfoModal = ({ open, handleClose, onDeleteEvent, currentEvent }: IProps) => {
@@ -28,10 +28,10 @@ const EventInfoModal = ({ open, handleClose, onDeleteEvent, currentEvent }: IPro
       </DialogContent>
       <DialogActions>
         <Button color="error" onClick={onClose}>
-                    Cancel
+          Cancel
         </Button>
         <Button color="info" onClick={onDeleteEvent}>
-                    Delete Event
+          Delete Event
         </Button>
       </DialogActions>
     </Dialog>
