@@ -1,15 +1,15 @@
 import React from "react";
-import { Typography } from "@mui/material";
-import { IEventInfo } from "./EventCalendar";
+// import { Typography } from "@mui/material";
+import { IEventInfo } from "./types";
 
 interface IProps {
-    event: IEventInfo
+  event: IEventInfo
 }
 
 const EventInfo = ({ event }: IProps) => {
   return (
-    <div>
-      <Typography>{event.description}</Typography>
+    <div style={{}}>
+      <p>{event.description}</p>
     </div>
   );
 };

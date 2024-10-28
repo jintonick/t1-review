@@ -10,6 +10,24 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+
+/* start style calendar */
+  .rbc-day-slot .rbc-events-container {
+    margin: 0px;
+  }
+
+  .rbc-event {
+    left: 0 !important;
+    width: 100% !important;
+  }
+  .css-1tcwmcw-MuiPickersToolbar-root-MuiDateTimePickerToolbar-root .MuiPickersToolbar-penIconButton {
+    display: none;
+  }
+  .rbc-allday-cell {
+    display: none;
+  }
+  /* end style calendar */
 }
 
 code {

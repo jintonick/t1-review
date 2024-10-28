@@ -18,13 +18,14 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { HexColorPicker } from "react-colorful";
-import { ITodo, generateId } from "./EventCalendar";
+import { generateId } from "./EventCalendar";
+import { ITodo } from "./types";
 
 interface IProps {
-    open: boolean
-    handleClose: Dispatch<SetStateAction<void>>
-    todos: ITodo[]
-    setTodos: Dispatch<SetStateAction<ITodo[]>>
+  open: boolean
+  handleClose: Dispatch<SetStateAction<void>>
+  todos: ITodo[]
+  setTodos: Dispatch<SetStateAction<ITodo[]>>
 }
 
 export const AddTodoModal = ({ open, handleClose, todos, setTodos }: IProps) => {
@@ -99,7 +100,7 @@ export const AddTodoModal = ({ open, handleClose, todos, setTodos }: IProps) => 
       <Divider />
       <DialogActions sx={{ marginTop: 2 }}>
         <Button sx={{ marginRight: 2 }} variant="contained" color="error" onClick={onClose}>
-                    Cancel
+          Cancel
         </Button>
         <Button
           onClick={() => onAddTodo()}
@@ -108,7 +109,7 @@ export const AddTodoModal = ({ open, handleClose, todos, setTodos }: IProps) => 
           variant="contained"
           color="success"
         >
-                    Add
+          Add
         </Button>
       </DialogActions>
     </Dialog>
