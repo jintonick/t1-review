@@ -2,7 +2,7 @@ import axios, { InternalAxiosRequestConfig } from "axios";
 import { getTokens } from "@app/utils/auth-token-utils";
 
 const apiInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: process.env.REACT_APP_API_BASE_URL,
   headers: {
     Accept: "application/json",
   },
