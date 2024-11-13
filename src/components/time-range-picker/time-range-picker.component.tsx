@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import {UpIcon, DownIcon} from "@icons/";
 
 interface TimeRangePickerProps {
-  startTime: string; // время начала в формате "hh:mm:ss,ms"
-  endTime: string; // время окончания в формате "hh:mm:ss,ms"
+  startTime: string;
+  endTime: string;
   onTimeChange?: (newStartTime: string, newEndTime: string) => void;
 }
 

@@ -1,10 +1,8 @@
-// api-instance.ts
-
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { getTokens } from "@app/utils/auth-token-utils";
 
 const apiInstance = axios.create({
-  baseURL: "http://localhost:8080", // Updated to your local backend
+  baseURL: "http://localhost:8080",
   headers: {
     Accept: "application/json",
   },

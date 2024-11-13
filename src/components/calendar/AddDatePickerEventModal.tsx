@@ -1,48 +1,48 @@
-import React, { Dispatch, MouseEvent, SetStateAction, ChangeEvent, useState, useMemo } from "react";
+import React, { Dispatch, SetStateAction, ChangeEvent, useMemo, useEffect } from "react";
 import {
   TextField,
   Dialog,
   DialogActions,
   DialogContent,
-  // DialogContentText,
   DialogTitle,
   Button,
   Box,
-  // Checkbox,
-  // Typography,
+  Typography,
 } from "@mui/material";
+import { Reviewer } from "@app/interfaces/user.type";
 import { LocalizationProvider, MobileDateTimePicker } from "@mui/x-date-pickers";
-// import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DatePickerEventFormData, IEventInfo, ITodo } from "./types";
+import { DatePickerEventFormData, ITodo } from "./types";
+import { useBookMeetingMutation, useCreateSlotMutation } from "@app/store/api/auth.api";
+import { toast } from "react-toastify";
 
 interface IProps {
-  open: boolean
-  handleClose: Dispatch<SetStateAction<void>>
-  datePickerEventFormData: DatePickerEventFormData
-  setDatePickerEventFormData: Dispatch<SetStateAction<DatePickerEventFormData>>
-  onAddEvent: (e: MouseEvent<HTMLButtonElement>) => void
-  todos: ITodo[]
-  type: "select" | "set"
-  freeTime?: IEventInfo[]
-  busyTime?: IEventInfo[]
+  open: boolean;
+  handleClose: () => void;
+  datePickerEventFormData: DatePickerEventFormData;
+  setDatePickerEventFormData: Dispatch<SetStateAction<DatePickerEventFormData>>;
+  onAddEvent: () => void;
+  todos: ITodo[];
+  type: "select" | "set";
+  freeTime?: Date;
+  busyTime?: Date;
+  selectedReviewer: Reviewer | null;
+  userId: number;
 }
-
-// moment.locale("ru");
 
 const AddDatePickerEventModal = ({
   open,
   handleClose,
   datePickerEventFormData,
   setDatePickerEventFormData,
-  onAddEvent,
   type,
-  freeTime,
-  busyTime
+  selectedReviewer,
+  userId,
 }: IProps) => {
-  const [startSelectDate, setStartSelectDate] = useState<Date | null>(null);
-  const [endSelectDate, setEndSelectDate] = useState<Date | null>(null);
   const { description, start, end, link } = datePickerEventFormData;
+
+  const [bookMeeting, { isLoading: isBooking }] = useBookMeetingMutation();
+  const [createSlot, { isLoading: isCreatingSlot }] = useCreateSlotMutation();
 
   const onClose = () => {
     handleClose();
@@ -55,106 +55,161 @@ const AddDatePickerEventModal = ({
     }));
   };
 
-  const disabled = useMemo(() => {
-    if (!freeTime) return false;
+  const isFormValid = useMemo(() => {
+    if (type === "select") {
+      return (
+        link.trim() !== "" &&
+          description.trim() !== "" &&
+          start !== undefined &&
+          end !== undefined
+      );
+    } else if (type === "set") {
+      return start !== undefined && end !== undefined;
+    }
+    return false;
+  }, [type, link, description, start, end]);
 
-    return freeTime.some((item) => {
-      const startFreeTime = item.start?.getTime();
-      const endFreeTime = item.end?.getTime();
+  useEffect(() => {
+    console.log("Type:", type);
+    console.log("Is Form Valid:", isFormValid);
+  }, [type, isFormValid]);
 
-      if (startFreeTime && startSelectDate && endFreeTime && endSelectDate &&
-        (startFreeTime <= startSelectDate.getTime() && startSelectDate.getTime() < endFreeTime)
-        && (endFreeTime >= endSelectDate.getTime() && startFreeTime < endSelectDate.getTime())
-        && startSelectDate.getTime() !== endSelectDate.getTime()) {
-        if (busyTime && busyTime.length > 0) {
-          return busyTime.some((elem) => {
-            const startBusyTime = elem.start?.getTime();
-            const endBusyTime = elem.end?.getTime();
+  const handleAddMeeting = async () => {
+    if (!userId) {
+      console.error("User ID is missing");
+      toast.error("Не удалось получить идентификатор пользователя.");
+      return;
+    }
 
-            if (startBusyTime && endBusyTime && ((startSelectDate.getTime() < startBusyTime && endSelectDate.getTime() <= startBusyTime) || startSelectDate.getTime() >= endBusyTime)
-              && ((endSelectDate.getTime() > endBusyTime && startSelectDate.getTime() >= endBusyTime) || endSelectDate.getTime() <= startBusyTime)) {
-              return true;
-            }
-          });
-        } else return true;
+    const { start, end } = datePickerEventFormData;
+
+    if (!start || !end) {
+      console.error("Start or end date is missing");
+      toast.error("Пожалуйста, выберите дату начала и окончания.");
+      return;
+    }
+
+    if (type === "set") {
+      const slotData = {
+        name: "Свободный слот",
+        expertId: userId,
+        description: "Выбрать дату",
+        startTime: start.toISOString(),
+        endTime: end.toISOString(),
+      };
+
+      try {
+        const response = await createSlot(slotData).unwrap();
+        console.log("Slot created successfully:", response);
+        toast.success("Свободное время успешно добавлено!");
+        handleClose();
+      } catch (error) {
+        console.error("Failed to create slot:", error);
+        toast.error("Не удалось добавить свободное время. Попробуйте ещё раз.");
       }
-    });
+    } else if (type === "select") {
+      if (!selectedReviewer) {
+        console.error("Reviewer is missing");
+        toast.error("Рецензент не выбран.");
+        return;
+      }
 
-  }, [freeTime, startSelectDate, endSelectDate]);
+      if (!link || !description) {
+        console.error("Не все поля заполнены");
+        toast.error("Пожалуйста, заполните все необходимые поля.");
+        return;
+      }
 
-  // const isDisabled = () => {
-  //   if ((type === "select" && description === "") || start === null) {
-  //     return true;
-  //   }
-  //   return false;
-  // };
+      const meetingData = {
+        name: link,
+        expertId: selectedReviewer.expertId,
+        userId,
+        description,
+        startTime: start.toISOString(),
+        endTime: end.toISOString(),
+      };
+
+      try {
+        const response = await bookMeeting(meetingData).unwrap();
+        console.log("Meeting booked successfully:", response);
+        toast.success("Встреча успешно забронирована!");
+        handleClose();
+      } catch (error) {
+        console.error("Failed to book meeting:", error);
+        toast.error("Не удалось забронировать встречу. Попробуйте ещё раз.");
+      }
+    }
+  };
 
   return (
-    <Dialog style={{ padding: "0px 40px" }} open={open} onClose={onClose}>
+    <Dialog style={{ padding: "0px 40px", borderRadius: "20px" }} open={open} onClose={onClose}>
       <Box px={5}>
-        <DialogTitle>{type === "select" ? "Забронируйте встречу" : "Выберите свободное время"}</DialogTitle>
+        {selectedReviewer && (
+          <Typography variant="h6" gutterBottom>
+                Reviewer ID: {selectedReviewer.expertId}
+          </Typography>
+        )}
+        <DialogTitle>
+          {type === "select" ? "Забронируйте встречу" : "Выберите свободное время"}
+        </DialogTitle>
         <DialogContent>
-          {/* <DialogContentText>To add a event, please fill in the information below.</DialogContentText> */}
           <Box component="form">
-            {type === "select" &&
-              <Box mb={1} mt={2}>
+            {type === "select" && (
+              <>
+                <Box mb={1} mt={2}>
+                  <TextField
+                    name="link"
+                    value={link}
+                    margin="dense"
+                    id="link"
+                    label="Name"
+                    type="text"
+                    fullWidth
+                    variant="outlined"
+                    onChange={onChange}
+                  />
+                </Box>
                 <TextField
-                  name="link"
-                  value={link}
+                  name="description"
+                  value={description}
                   margin="dense"
-                  id="link"
-                  label="Link"
+                  id="description"
+                  label="Description"
                   type="text"
                   fullWidth
                   variant="outlined"
                   onChange={onChange}
                 />
-              </Box>}
-            {type === "select" && <TextField
-              name="description"
-              value={description}
-              margin="dense"
-              id="description"
-              label="Description"
-              type="text"
-              fullWidth
-              variant="outlined"
-              onChange={onChange}
-            />}
+              </>
+            )}
 
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Box mb={3} mt={2}>
                 <MobileDateTimePicker
                   label="Дата начала"
-                  value={start || ""}
+                  value={start || null}
                   minutesStep={30}
                   onChange={(newValue) => {
-                    setStartSelectDate(new Date(newValue!));
-                    setDatePickerEventFormData((prevState) => {
-                      return ({
-                        ...prevState,
-                        start: new Date(newValue!),
-                      });
-                    });
-                  }
-                  }
+                    setDatePickerEventFormData((prevState) => ({
+                      ...prevState,
+                      start: newValue ? new Date(newValue) : undefined,
+                    }));
+                  }}
                   renderInput={(params) => <TextField fullWidth {...params} />}
                 />
               </Box>
 
               <MobileDateTimePicker
                 label="Дата окончания"
-                minDate={start}
+                minDate={start || undefined}
                 minutesStep={30}
-                value={end || ""}
+                value={end || null}
                 onChange={(newValue) => {
-                  setEndSelectDate(new Date(newValue!));
                   setDatePickerEventFormData((prevState) => ({
                     ...prevState,
-                    end: new Date(newValue!),
+                    end: newValue ? new Date(newValue) : undefined,
                   }));
-                }
-                }
+                }}
                 renderInput={(params) => <TextField fullWidth {...params} />}
               />
             </LocalizationProvider>
@@ -163,16 +218,25 @@ const AddDatePickerEventModal = ({
       </Box>
       <DialogActions>
         <Button color="error" onClick={onClose}>
-          Отменить
+            Отменить
         </Button>
-        <Button disabled={type === "select" && !disabled} color="success" onClick={onAddEvent}>
-          Добавить
+        <Button
+          disabled={!isFormValid || isBooking || isCreatingSlot}
+          color="success"
+          onClick={handleAddMeeting}
+        >
+          {isBooking || isCreatingSlot ? "Добавление..." : "Добавить"}
         </Button>
       </DialogActions>
-
     </Dialog>
   );
 };
-// AddDatePickerEventModal.displayName = "AddDatePickerEventModal";
 
 export default AddDatePickerEventModal;
+
+
+
+
+
+
+

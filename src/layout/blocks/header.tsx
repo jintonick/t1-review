@@ -3,7 +3,6 @@ import logo from "@app/imgs/logo.svg";
 import { useAuthContext } from "@app/utils/auth-provider";
 import { useNavigate } from "react-router-dom";
 import DropdownMenu from "@app/layout/blocks/dropdown-menu";
-import SubscriptionModal from "@app/pages/subscription/subscription.modal";
 
 export const Header = () => {
   const auth = useAuthContext();
@@ -11,11 +10,6 @@ export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const avatarRef = useRef<HTMLDivElement>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
 
   const handleLogout = () => {
     auth?.logout();
@@ -79,7 +73,6 @@ export const Header = () => {
           )}
         </div>
       </div>
-      <SubscriptionModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 };

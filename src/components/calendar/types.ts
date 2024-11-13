@@ -1,23 +1,3 @@
-import { type Event } from "react-big-calendar";
-
-export interface ITodo {
-  _id: string;
-  title: string;
-  color?: string;
-}
-
-export interface IEventInfo extends Event {
-  _id: string;
-  description: string;
-  todoId?: string;
-  type?: "set" | "select";
-}
-
-export interface EventFormData {
-  description: string;
-  todoId?: string;
-}
-
 export interface DatePickerEventFormData {
   description: string;
   link: string;
@@ -25,5 +5,29 @@ export interface DatePickerEventFormData {
   allDay: boolean;
   start?: Date;
   end?: Date;
-  type?: "set" | "select",
+  type?: "set" | "select";
 }
+
+export interface ITodo {
+  _id: string;
+  title: string;
+  color?: string;
+}
+
+export interface IEventInfo {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  allDay: boolean;
+  description: string;
+  _id: string;
+  todoId?: string;
+  eventType?: "set" | "select" | "slot" | "meeting";
+}
+
+export interface EventFormData {
+  description: string;
+  todoId?: string;
+}
+

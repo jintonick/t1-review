@@ -17,9 +17,10 @@ const EventInfoModal = ({ open, handleClose, onDeleteEvent, currentEvent }: IPro
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Event Info</DialogTitle>
+      <DialogTitle>Информация о встрече</DialogTitle>
       <DialogContent>
         <DialogContentText>
+          <h1>Описание:</h1>
           <Typography sx={{ fontSize: 14, marginTop: 3 }} color="text.secondary" gutterBottom>
             {currentEvent?.description}
           </Typography>
@@ -28,10 +29,10 @@ const EventInfoModal = ({ open, handleClose, onDeleteEvent, currentEvent }: IPro
       </DialogContent>
       <DialogActions>
         <Button color="error" onClick={onClose}>
-          Cancel
+          Закрыть
         </Button>
         <Button color="info" onClick={onDeleteEvent}>
-          Delete Event
+          Удалить встречу
         </Button>
       </DialogActions>
     </Dialog>

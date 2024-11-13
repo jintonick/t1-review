@@ -8,7 +8,7 @@ const DefaultPage = () => {
   const auth = useAuthContext();
 
   if (auth?.userType === null) {
-    return null; // Или индикатор загрузки
+    return null;
   }
 
   if (auth?.userType === "expert") {
@@ -16,7 +16,6 @@ const DefaultPage = () => {
   } else if (auth?.userType === "client") {
     return <Navigate to="/projects" replace />;
   } else {
-    // Если userType неожиданное значение
     return <Navigate to="/login" replace />;
   }
 };

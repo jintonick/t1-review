@@ -1,5 +1,3 @@
-// required-auth.tsx
-
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuthContext } from "@app/utils/auth-provider";
@@ -12,7 +10,7 @@ const RequiredAuth = ({ children }: RequiredAuthProps) => {
   const auth = useAuthContext();
 
   if (auth?.isAuth === null) {
-    return null; // Или индикатор загрузки
+    return null;
   }
 
   if (!auth?.isAuth) {

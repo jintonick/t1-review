@@ -3,11 +3,15 @@ import {jwtDecode} from "jwt-decode";
 interface DecodedToken {
   exp: number;
   roles?: string;
+  userId: string;
+  sub: string;
 }
 
 export interface AuthTokens {
   access_token: string;
   userType: "expert" | "client" | null;
+  userId: string;
+  sub: string;
 }
 
 export const getTokens = (): AuthTokens | null => {
@@ -15,8 +19,7 @@ export const getTokens = (): AuthTokens | null => {
   if (tokens) {
     try {
       return JSON.parse(tokens);
-    } catch (error) {
-      console.error("Error parsing tokens from localStorage", error);
+    } catch {
       return null;
     }
   }
@@ -25,23 +28,30 @@ export const getTokens = (): AuthTokens | null => {
 
 export const saveTokens = (tokens: { access_token: string }): AuthTokens => {
   let userType: "expert" | "client" | null = null;
+  let userId: string = "";
+  let sub: string = "";
 
   try {
     const decoded = jwtDecode<DecodedToken>(tokens.access_token);
     console.log("Decoded token:", decoded);
     if (decoded.roles) {
-      if (decoded.roles === "EXPERT") {
+      if (decoded.roles === "ROLE_EXPERT") {
         userType = "expert";
-      } else if (decoded.roles === "USER") {
+      } else if (decoded.roles === "ROLE_USER") {
         userType = "client";
       }
+    }
+    if (decoded.userId) {
+      userId = decoded.userId;
+    }
+    if (decoded.sub) {
+      sub = decoded.sub;
     }
   } catch (error) {
     console.warn("Failed to decode JWT token", error);
   }
 
-  const tokensWithUserType: AuthTokens = { ...tokens, userType };
-  console.log("Tokens with userType:", tokensWithUserType);
+  const tokensWithUserType: AuthTokens = { ...tokens, userType, userId, sub };
   localStorage.setItem("REACT_TOKEN_AUTH_KEY", JSON.stringify(tokensWithUserType));
   return tokensWithUserType;
 };

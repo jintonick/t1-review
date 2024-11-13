@@ -1,5 +1,3 @@
-// routes.tsx
-
 import React from "react";
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
 import DefaultPage from "@app/pages/default-page";

@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import { Button, Pagination, Modal } from "antd";
 import RubberTable from "@app/components/rubber-table";
-import data from "./data.mock.json";
 import CalendarBox from "@app/components/calendar/EventCalendar";
+import { Reviewer } from "@app/interfaces/user.type";
+import { useAuthContext } from "@app/utils/auth-provider";
+import { TableItem } from "@app/components/rubber-table/table.type";
+import { useGetReviewersQuery } from "@app/store/api/auth.api";
 
-type DataItem = {
-  id: string;
-  name: string;
-  spec: string;
-  comp: string;
-};
-
-const ProjectTabelBlock = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedItem, setSelectedItem] = useState<DataItem | null>(null);
+const ProjectTabelBlock: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [selectedItem, setSelectedItem] = useState<Reviewer | null>(null);
   const itemsPerPage = 6;
+
+  const { data: apiData, error, isLoading } = useGetReviewersQuery();
+
+  const auth = useAuthContext();
+  const userId = Number(auth?.userId);
 
   const columns = [
     {
@@ -37,7 +38,12 @@ const ProjectTabelBlock = () => {
     },
   ];
 
-  const transformedData = data.map((item) => ({
+  if (isLoading) return <div>Загрузка...</div>;
+  if (error || !apiData) return <div>Ошибка при загрузке данных</div>;
+
+  const reviewersData = apiData;
+
+  const transformedData: TableItem[] = reviewersData.map((item: Reviewer) => ({
     ...item,
     name: (
       <div>
@@ -46,21 +52,24 @@ const ProjectTabelBlock = () => {
     ),
     spec: (
       <div>
-        <h1 className="text-[16px]">{item.spec}</h1>
+        <h1 className="text-[16px]">{item.specialization}</h1>
       </div>
     ),
     comp: (
       <div>
-        <h1 className="text-[16px]">{item.comp}</h1>
+        <h1 className="text-[16px]">{item.expertId}</h1>
       </div>
     ),
     action: (
       <div>
-        <Button type="text" onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-          e.stopPropagation();
-          setSelectedItem(item);
-        }}>
-            Выбрать доступное время
+        <Button
+          type="text"
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedItem(item);
+          }}
+        >
+                    Выбрать доступное время
         </Button>
       </div>
     ),
@@ -69,7 +78,7 @@ const ProjectTabelBlock = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  const currentData = transformedData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentData: TableItem[] = transformedData.slice(indexOfFirstItem, indexOfLastItem);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -84,7 +93,7 @@ const ProjectTabelBlock = () => {
       <RubberTable columns={columns} dataSource={currentData} />
       <Pagination
         current={currentPage}
-        total={data.length}
+        total={reviewersData.length}
         pageSize={itemsPerPage}
         onChange={handlePageChange}
       />
@@ -95,11 +104,19 @@ const ProjectTabelBlock = () => {
         onCancel={handleModalClose}
         footer={null}
       >
-        <CalendarBox />
+        {selectedItem && (
+          <CalendarBox
+            selectedReviewer={selectedItem}
+            userId={userId}
+            mode="slots"
+          />
+        )}
       </Modal>
     </div>
   );
 };
 
 export default ProjectTabelBlock;
+
+
 

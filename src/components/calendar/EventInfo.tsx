@@ -1,15 +1,14 @@
+// EventInfo.tsx
+
 import React from "react";
-// import { Typography } from "@mui/material";
+import { EventProps } from "react-big-calendar";
 import { IEventInfo } from "./types";
 
-interface IProps {
-  event: IEventInfo
-}
-
-const EventInfo = ({ event }: IProps) => {
+const EventInfo: React.FC<EventProps<IEventInfo>> = ({ event }) => {
   return (
-    <div style={{}}>
-      <p>{event.description}</p>
+    <div>
+      <strong>{event.title}</strong>
+      <div>{event.description}</div>
     </div>
   );
 };
