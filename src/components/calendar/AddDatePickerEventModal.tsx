@@ -7,7 +7,6 @@ import {
   DialogTitle,
   Button,
   Box,
-  Typography,
 } from "@mui/material";
 import { Reviewer } from "@app/interfaces/user.type";
 import { LocalizationProvider, MobileDateTimePicker } from "@mui/x-date-pickers";
@@ -144,11 +143,6 @@ const AddDatePickerEventModal = ({
   return (
     <Dialog style={{ padding: "0px 40px", borderRadius: "20px" }} open={open} onClose={onClose}>
       <Box px={5}>
-        {selectedReviewer && (
-          <Typography variant="h6" gutterBottom>
-                Reviewer ID: {selectedReviewer.expertId}
-          </Typography>
-        )}
         <DialogTitle>
           {type === "select" ? "Забронируйте встречу" : "Выберите свободное время"}
         </DialogTitle>

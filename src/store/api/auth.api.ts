@@ -62,7 +62,6 @@ export const UserApi = createApi({
         method: "PATCH",
         body: { meetingId, comment },
       }),
-      invalidatesTags: ["Meeting"],
     }),
     createSlot: builder.mutation<CreateSlotResponse, CreateSlotRequest>({
       query: (body) => ({
